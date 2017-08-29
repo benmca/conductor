@@ -3,6 +3,10 @@ public class Change {
   int tempo = 120;
   int num = 4;
   int denom = 4;
+  
+  float getDur(){
+    return 60/tempo;
+  }
   public Change(int a, int b, int c, int d){
     barNumber = a;
     tempo = b;
@@ -24,14 +28,14 @@ public class Animation{
   }
   
   public boolean finished(){
-    return (frameCount > (startFrame+durFrames));
+    return (myFrameCount > (startFrame+durFrames)); //<>//
   }
   
-  public void updateMe(){
+  public void updateMe(){ //<>//
     if(finished()){ //<>// //<>//
       return;
     }
-    int relativeFrameCount = frameCount - startFrame; //<>//
+    int relativeFrameCount = myFrameCount - startFrame; //<>//
 //    fill(#FF0000, (1.0-((float)relativeFrameCount/(float)durFrames)) * 255.0);
     fill(#FFFFFF, (1.0-((float)relativeFrameCount/(float)durFrames)) * 255.0);
     noStroke();
@@ -45,27 +49,30 @@ int myFrameRate=60;
 int barNumber = 1;
 int gutter = 20;
 int totalBars = 80;
+int countInBars = 2;
+int myFrameCount = 0;
+
 ArrayList<Animation> animations = new ArrayList<Animation>();
 ArrayList<Change> changes = new ArrayList<Change>();
 Change curChange = null;
 void settings(){
-  fullScreen();
-//  size(720,480);  
+//  fullScreen();
+  size(720,480);  
 }
 
 void setup() {
-  loadChanges();
+  initChanges();
   background(0);
   frameRate(myFrameRate);
   smooth();
 }
 
-void loadChanges(){
-  changes.add(new Change(1, 40, 4, 4));
+void initChanges(){
+  changes.add(new Change(1, 60, 4, 4));
 //  changes.add(new Change(3, 120, 3, 4));
   totalBars = 30;
   curChange = changes.get(0);
-  changes.remove(0);
+  myFrameCount = -(getCountInFrames());
 }
 
 void drawBoxes(){
@@ -73,7 +80,15 @@ void drawBoxes(){
   rect(width*.6,gutter, width*.4-(gutter), height-(gutter*2));
 }
 
-void drawText(float tempo, int barNumber, int beat){
+void drawText(float tempo){
+  int barNumber = 1+(int)(myFrameCount/getTotalFramesPerCircle());  
+  int beat = 1+(myFrameCount % getTotalFramesPerCircle()/getTotalFramesPerSegment());
+  if(myFrameCount < 1){
+    beat = 4 + (myFrameCount % getTotalFramesPerCircle()/getTotalFramesPerSegment());
+    barNumber = -(1-(int)(myFrameCount/getTotalFramesPerCircle()));  
+    //barNumber = 
+  }
+  
   float boxWidth = width*.4-(gutter);
   float boxCenter = boxWidth/2;
   textSize(height/24);
@@ -97,31 +112,51 @@ void drawText(float tempo, int barNumber, int beat){
   text("Tempo: " + Float.toString(tempo), width*.6+(gutter), height*.9);  // Text wraps within text box
 }
 
+
+int getTotalFramesPerCircle(Change theChange){
+  return (int)(theChange.getDur()*myFrameRate*theChange.num);
+}
+
+int getTotalFramesPerCircle(){
+  return (int)(curChange.getDur()*myFrameRate*curChange.num);
+}
+
+int getTotalFramesPerSegment(Change theChange){
+  return (int)(theChange.getDur()*myFrameRate);
+}
+
+int getTotalFramesPerSegment(){
+  return (int)(curChange.getDur()*myFrameRate);
+}
+
+int getCountInFrames(){
+  Change firstChange = changes.get(0);
+  return (int)(getTotalFramesPerCircle(firstChange) * countInBars);
+}
 void draw() {
+  
   stroke(0xffffffff);
   strokeWeight(1);
   noFill();
-
-  float tempo = 60.0;
-  int num = 4;
-  int denom = 4;
-  float dur = 60/tempo;
-  int totalFramesPerCircle = (int)(dur*myFrameRate*num);
-  int totalFramesPerSegment = (int)(dur*myFrameRate);
-  //int barNumber = 1+(int)(frameCount/totalFramesPerCircle);
+  
+  //TODO - load changes incrementally
+  
+  int totalFramesPerCircle = getTotalFramesPerCircle();
+  int totalFramesPerSegment = getTotalFramesPerSegment();
+  //int barNumber = 2+(int)(myFrameCount/totalFramesPerCircle);
   
   
-  int beat = 1+(frameCount % totalFramesPerCircle/totalFramesPerSegment);
+//  int beat = 1+(myFrameCount % totalFramesPerCircle/totalFramesPerSegment);
   // todo - need to determine if this is downbeat or not, and update from changes that way...
-  if((1+(int)(frameCount/totalFramesPerCircle)) > barNumber){
-    barNumber++;
-  }
+  //if((1+(int)(myFrameCount/totalFramesPerCircle)) > barNumber){
+  //  barNumber++;
+  //}
   
   background(0);
   drawBoxes();
-  drawText((int)tempo, barNumber, beat);
+  drawText(curChange.tempo);
 
-  int i = (360*(frameCount%totalFramesPerCircle)) / totalFramesPerCircle;
+  int i = (360*(myFrameCount%totalFramesPerCircle)) / totalFramesPerCircle;
   float radius = (int)(width*.2);
   int x = int(radius * (sin(PI/180.* i))  );
   int y = int(radius * (1.-cos(PI/180.* i))  );
@@ -139,10 +174,24 @@ void draw() {
   //arc(centerx, centery, radius*2-20, radius*2-20, radians(270), radians(i), PIE);
   //noFill();
   
-  if(frameCount % totalFramesPerSegment == 1){
-    animations.add(new Animation(x+centerx, (int)(y+(centery-radius)),frameCount, 20)); 
+  if(myFrameCount % totalFramesPerSegment == 1){
+    animations.add(new Animation(x+centerx, (int)(y+(centery-radius)),myFrameCount, 20)); 
   }
   updateBeatAnimation();
+  myFrameCount++;
+}
+
+
+void keyPressed() {
+  if (key == ' ') {
+    //resetAnimations
+    for(int i=animations.size()-1;i>=0;i--){
+      Animation item = animations.get(i);
+      animations.remove(i);
+    }
+    initChanges();
+    background(0);
+  } 
 }
 
 

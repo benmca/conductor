@@ -1,17 +1,18 @@
-
 int myFrameRate=60; //<>// //<>// //<>// //<>//
 int gutter = 20;
 int totalBars = 80;
 int countInBars = 2;
 int myFrameCount = 0;
+PFont theFont = null;
+PFont theBigFont = null;
 
 ArrayList<Animation> animations = new ArrayList<Animation>();
 ArrayList<Change> changes = new ArrayList<Change>();
 Change curChange = null;
 
 void settings(){
-  fullScreen();
-  //size(720,480);  
+  //fullScreen();
+  size(720,480);  
 }
 
 void setup() {
@@ -19,6 +20,8 @@ void setup() {
   background(0);
   frameRate(myFrameRate);
   smooth();
+  theFont = loadFont("Helvetica-48.vlw");
+  theBigFont = loadFont("Helvetica-200.vlw");
 }
 
 void initChanges(){
@@ -38,22 +41,27 @@ void drawText(){
   
   float boxWidth = width*.4-(gutter);
   //float boxCenter = boxWidth/2;
+  textFont(theFont);
   textSize(height/24);
   textAlign(LEFT);
   text("Bar:", width*.6+(gutter), gutter, boxWidth, height*.1);  // Text wraps within text box
   textSize((height/4));
   //rect(width*.6, height*.1, boxWidth, height/3);
   textAlign(CENTER);
+  textFont(theBigFont);
   text(Integer.toString(getCurBarNumber()), width*.6, height*.1, boxWidth, height/3);  // Text wraps within text box
   
+  textFont(theFont);
   textSize(height/24);
   textAlign(LEFT);
   text("Beat:", width*.6+(gutter), height*.5);  // Text wraps within text box
   textSize(height/4);
   textAlign(CENTER);
   //rect(width*.6, height*.5, boxWidth, height/3 );  // Text wraps within text box
+  textFont(theBigFont);
   text(Integer.toString(getCurBeat()), width*.6, height*.5, boxWidth, height/3 );  // Text wraps within text box
   
+  textFont(theFont);
   textSize(height/24);
   textAlign(LEFT);
   text("Tempo: " + Float.toString(curChange.tempo), width*.6+(gutter), height*.9);  // Text wraps within text box
@@ -96,10 +104,11 @@ int getCurBeat(){
 }
 
 void draw() {
+  background(0);
   stroke(0xffffffff);
   strokeWeight(1);
   noFill();
-  background(0);
+
   drawBoxes();
   drawText();
 

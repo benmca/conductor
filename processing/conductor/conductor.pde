@@ -10,8 +10,8 @@ ArrayList<Change> changes = new ArrayList<Change>();
 Change curChange = null;
 
 void settings(){
-  fullScreen();
-  //size(720,480);  
+  //fullScreen();
+  size(720,480);  
 }
 
 void setup() {
@@ -37,7 +37,7 @@ void drawBoxes(){
 void drawText(){
   
   float boxWidth = width*.4-(gutter);
-  float boxCenter = boxWidth/2;
+  //float boxCenter = boxWidth/2;
   textSize(height/24);
   textAlign(LEFT);
   text("Bar:", width*.6+(gutter), gutter, boxWidth, height*.1);  // Text wraps within text box
@@ -57,6 +57,8 @@ void drawText(){
   textSize(height/24);
   textAlign(LEFT);
   text("Tempo: " + Float.toString(curChange.tempo), width*.6+(gutter), height*.9);  // Text wraps within text box
+  text("Count In Bars: " + Integer.toString(countInBars), width*.6+(gutter), height*.95);  // Text wraps within text box
+  //text("Count In Bars: " + Integer.toString(countInBars), width*.6+(gutter) + 100, height*.95);  // Text wraps within text box
 }
 
 
@@ -124,17 +126,38 @@ void draw() {
   myFrameCount++;
 }
 
-
-void keyPressed() {
-  if (key == ' ') {
-    //resetAnimations
-    for(int i=animations.size()-1;i>=0;i--){
+void resetSketch(){
+      for(int i=animations.size()-1;i>=0;i--){
       //Animation item = animations.get(i);
       animations.remove(i);
     }
     initChanges();
     background(0);
+}
+
+void keyPressed() {
+  if (key == ' ') {
+    resetSketch();
   } 
+  if (keyCode == 37){
+    countInBars--;
+    resetSketch();
+  }
+  if (keyCode == 39){
+    countInBars++;
+    resetSketch();
+  }
+  
+  if (keyCode == 38){
+    //countInBars--;
+    //resetSketch();
+  }
+  if (keyCode == 40){
+    //countInBars++;
+    //resetSketch();
+  }
+  
+  //System.out.println(Integer.toString(keyCode));
 }
 
 

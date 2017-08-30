@@ -46,7 +46,6 @@ public class Animation{
 }  
 
 int myFrameRate=60;
-int barNumber = 1;
 int gutter = 20;
 int totalBars = 80;
 int countInBars = 2;
@@ -80,14 +79,7 @@ void drawBoxes(){
   rect(width*.6,gutter, width*.4-(gutter), height-(gutter*2));
 }
 
-void drawText(float tempo){
-  int barNumber = 1+(int)(myFrameCount/getTotalFramesPerCircle());  
-  int beat = 1+(myFrameCount % getTotalFramesPerCircle()/getTotalFramesPerSegment());
-  if(myFrameCount < 1){
-    beat = 4 + (myFrameCount % getTotalFramesPerCircle()/getTotalFramesPerSegment());
-    barNumber = -(1-(int)(myFrameCount/getTotalFramesPerCircle()));  
-    //barNumber = 
-  }
+void drawText(){
   
   float boxWidth = width*.4-(gutter);
   float boxCenter = boxWidth/2;
@@ -97,7 +89,7 @@ void drawText(float tempo){
   textSize((height/4));
   //rect(width*.6, height*.1, boxWidth, height/3);
   textAlign(CENTER);
-  text(Integer.toString(barNumber), width*.6, height*.1, boxWidth, height/3);  // Text wraps within text box
+  text(Integer.toString(getCurBarNumber()), width*.6, height*.1, boxWidth, height/3);  // Text wraps within text box
   
   textSize(height/24);
   textAlign(LEFT);
@@ -105,11 +97,11 @@ void drawText(float tempo){
   textSize(height/4);
   textAlign(CENTER);
   //rect(width*.6, height*.5, boxWidth, height/3 );  // Text wraps within text box
-  text(Integer.toString(beat), width*.6, height*.5, boxWidth, height/3 );  // Text wraps within text box
+  text(Integer.toString(getCurBeat()), width*.6, height*.5, boxWidth, height/3 );  // Text wraps within text box
   
   textSize(height/24);
   textAlign(LEFT);
-  text("Tempo: " + Float.toString(tempo), width*.6+(gutter), height*.9);  // Text wraps within text box
+  text("Tempo: " + Float.toString(curChange.tempo), width*.6+(gutter), height*.9);  // Text wraps within text box
 }
 
 
@@ -133,6 +125,19 @@ int getCountInFrames(){
   Change firstChange = changes.get(0);
   return (int)(getTotalFramesPerCircle(firstChange) * countInBars);
 }
+
+int getCurBarNumber(){
+  return (myFrameCount < 1) ? 
+    -(1-(int)(myFrameCount/getTotalFramesPerCircle())) :
+    1+(int)(myFrameCount/getTotalFramesPerCircle());  
+}
+
+int getCurBeat(){
+  return (myFrameCount < 1) ? 
+    (4 + (myFrameCount % getTotalFramesPerCircle()/getTotalFramesPerSegment())) : 
+    1+(myFrameCount % getTotalFramesPerCircle()/getTotalFramesPerSegment());
+}
+
 void draw() {
   
   stroke(0xffffffff);
@@ -141,8 +146,8 @@ void draw() {
   
   //TODO - load changes incrementally
   
-  int totalFramesPerCircle = getTotalFramesPerCircle();
-  int totalFramesPerSegment = getTotalFramesPerSegment();
+  //int totalFramesPerCircle = getTotalFramesPerCircle();
+  //int totalFramesPerSegment = getTotalFramesPerSegment();
   //int barNumber = 2+(int)(myFrameCount/totalFramesPerCircle);
   
   
@@ -154,9 +159,9 @@ void draw() {
   
   background(0);
   drawBoxes();
-  drawText(curChange.tempo);
+  drawText();
 
-  int i = (360*(myFrameCount%totalFramesPerCircle)) / totalFramesPerCircle;
+  int i = (360*(myFrameCount % getTotalFramesPerCircle())) / getTotalFramesPerCircle();
   float radius = (int)(width*.2);
   int x = int(radius * (sin(PI/180.* i))  );
   int y = int(radius * (1.-cos(PI/180.* i))  );
@@ -174,7 +179,7 @@ void draw() {
   //arc(centerx, centery, radius*2-20, radius*2-20, radians(270), radians(i), PIE);
   //noFill();
   
-  if(myFrameCount % totalFramesPerSegment == 1){
+  if(myFrameCount % getTotalFramesPerSegment() == 1){
     animations.add(new Animation(x+centerx, (int)(y+(centery-radius)),myFrameCount, 20)); 
   }
   updateBeatAnimation();
@@ -186,7 +191,7 @@ void keyPressed() {
   if (key == ' ') {
     //resetAnimations
     for(int i=animations.size()-1;i>=0;i--){
-      Animation item = animations.get(i);
+      //Animation item = animations.get(i);
       animations.remove(i);
     }
     initChanges();

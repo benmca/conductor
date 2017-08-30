@@ -1,51 +1,5 @@
-public class Change {
-  int barNumber = 1;
-  int tempo = 120;
-  int num = 4;
-  int denom = 4;
-  
-  float getDur(){
-    return 60/tempo;
-  }
-  public Change(int a, int b, int c, int d){
-    barNumber = a;
-    tempo = b;
-    num = c;
-    denom = d;
-  }
-}
 
-public class Animation{
-  int anchorX = 0;
-  int anchorY = 0;
-  int startFrame = 0;
-  int durFrames = 0;
-  public Animation(int x, int y, int start, int dur){
-    anchorX = x;
-    anchorY = y;
-    startFrame = start;
-    durFrames = dur;
-  }
-  
-  public boolean finished(){
-    return (myFrameCount > (startFrame+durFrames)); //<>//
-  }
-  
-  public void updateMe(){ //<>//
-    if(finished()){ //<>// //<>//
-      return;
-    }
-    int relativeFrameCount = myFrameCount - startFrame; //<>//
-//    fill(#FF0000, (1.0-((float)relativeFrameCount/(float)durFrames)) * 255.0);
-    fill(#FFFFFF, (1.0-((float)relativeFrameCount/(float)durFrames)) * 255.0);
-    noStroke();
-    ellipse(anchorX, anchorY, width*.3,width*.3);
-    stroke(#FFFFFF);
-    fill(#FFFFFF);
-  }
-}  
-
-int myFrameRate=60;
+int myFrameRate=60; //<>// //<>// //<>// //<>//
 int gutter = 20;
 int totalBars = 80;
 int countInBars = 2;
@@ -54,9 +8,10 @@ int myFrameCount = 0;
 ArrayList<Animation> animations = new ArrayList<Animation>();
 ArrayList<Change> changes = new ArrayList<Change>();
 Change curChange = null;
+
 void settings(){
-//  fullScreen();
-  size(720,480);  
+  fullScreen();
+  //size(720,480);  
 }
 
 void setup() {
@@ -139,24 +94,9 @@ int getCurBeat(){
 }
 
 void draw() {
-  
   stroke(0xffffffff);
   strokeWeight(1);
   noFill();
-  
-  //TODO - load changes incrementally
-  
-  //int totalFramesPerCircle = getTotalFramesPerCircle();
-  //int totalFramesPerSegment = getTotalFramesPerSegment();
-  //int barNumber = 2+(int)(myFrameCount/totalFramesPerCircle);
-  
-  
-//  int beat = 1+(myFrameCount % totalFramesPerCircle/totalFramesPerSegment);
-  // todo - need to determine if this is downbeat or not, and update from changes that way...
-  //if((1+(int)(myFrameCount/totalFramesPerCircle)) > barNumber){
-  //  barNumber++;
-  //}
-  
   background(0);
   drawBoxes();
   drawText();
@@ -172,17 +112,15 @@ void draw() {
   ellipse(centerx, centery, radius*2,radius*2);
   line(centerx, centery,x+centerx, y+(centery-radius));
   point(x+centerx, y+(centery-radius));
-  
-  //drawArcs
-  
-  //fill(255);
-  //arc(centerx, centery, radius*2-20, radius*2-20, radians(270), radians(i), PIE);
-  //noFill();
-  
+
   if(myFrameCount % getTotalFramesPerSegment() == 1){
-    animations.add(new Animation(x+centerx, (int)(y+(centery-radius)),myFrameCount, 20)); 
+    animations.add(new BeatAnimation(x+centerx, (int)(y+(centery-radius)),myFrameCount, 20)); 
   }
-  updateBeatAnimation();
+  if(myFrameCount % getTotalFramesPerCircle() == 1){
+    animations.add(new BeatAnimation(x+centerx, (int)(y+(centery-radius)),myFrameCount, 20)); 
+    animations.add(new DownbeatAnimation(centerx, centery, radius, myFrameCount, (int)(getTotalFramesPerCircle()*.25))); 
+  }
+  updateAnimations();
   myFrameCount++;
 }
 
@@ -200,7 +138,7 @@ void keyPressed() {
 }
 
 
-void updateBeatAnimation(){
+void updateAnimations(){
   for(int i=animations.size()-1;i>=0;i--){
     Animation item = animations.get(i);
     if(item.finished()){

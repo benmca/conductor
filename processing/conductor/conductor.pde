@@ -10,8 +10,8 @@ ArrayList<Change> changes = new ArrayList<Change>();
 Change curChange = null;
 
 void settings(){
-  //fullScreen();
-  size(720,480);  
+  fullScreen();
+  //size(720,480);  
 }
 
 void setup() {

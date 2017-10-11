@@ -5,7 +5,8 @@ public class Change {
   int denom = 4;
   
   float getDur(){
-    return 60/tempo;
+    float dur = 60.0/tempo;
+    return dur;
   }
   public Change(int a, int b, int c, int d){
     barNumber = a;

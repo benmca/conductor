@@ -9,6 +9,7 @@ PFont theBigFont = null;
 ArrayList<Animation> animations = new ArrayList<Animation>();
 ArrayList<Change> changes = new ArrayList<Change>();
 Change curChange = null;
+Change firstChange = null;
 
 void settings(){
   //fullScreen();
@@ -25,11 +26,12 @@ void setup() {
 }
 
 void initChanges(){
-  changes.add(new Change(1, 60, 4, 4));
+  changes.add(new Change(1, 120, 4, 4));
 //  changes.add(new Change(3, 120, 3, 4));
   totalBars = 30;
   curChange = changes.get(0);
-  myFrameCount = -(getCountInFrames());
+  firstChange = curChange;
+  myFrameCount = -(getCountInFrames()); //<>//
 }
 
 void drawBoxes(){
@@ -75,7 +77,7 @@ int getTotalFramesPerCircle(Change theChange){
 }
 
 int getTotalFramesPerCircle(){
-  return (int)(curChange.getDur()*myFrameRate*curChange.num);
+  return (int)(curChange.getDur()*myFrameRate*curChange.num); //<>//
 }
 
 int getTotalFramesPerSegment(Change theChange){
@@ -87,7 +89,6 @@ int getTotalFramesPerSegment(){
 }
 
 int getCountInFrames(){
-  Change firstChange = changes.get(0);
   return (int)(getTotalFramesPerCircle(firstChange) * countInBars);
 }
 

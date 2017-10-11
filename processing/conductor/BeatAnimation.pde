@@ -16,7 +16,7 @@ public class BeatAnimation implements Animation{
   }
   
   public void updateMe(){
-    if(finished()){ //<>//
+    if(finished()){
       return;
     }
     int relativeFrameCount = myFrameCount - startFrame;

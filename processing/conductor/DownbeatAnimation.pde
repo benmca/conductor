@@ -12,9 +12,10 @@ public class DownbeatAnimation extends BeatAnimation {
       return;
     }
     int relativeFrameCount = myFrameCount - startFrame;
-    fill(#00FF00, (1.0-((float)relativeFrameCount/(float)durFrames)) * 255.0);
+    fill(#FF0000, (1.0-((float)relativeFrameCount/(float)durFrames)) * 255.0);
     noStroke();
-    ellipse(anchorX, anchorY, width*.5, width*.5);
+    //ellipse(anchorX, anchorY, width*.5, width*.5);
+    rect(0,0,width,height);
     stroke(#FFFFFF);
     fill(#FFFFFF);
   }

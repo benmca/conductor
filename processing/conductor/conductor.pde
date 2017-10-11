@@ -12,8 +12,8 @@ Change curChange = null;
 Change firstChange = null;
 
 void settings(){
-  //fullScreen();
-  size(720,480);  
+  fullScreen();
+  //size(720,480);  
 }
 
 void setup() {
@@ -27,11 +27,11 @@ void setup() {
 
 void initChanges(){
   changes.add(new Change(1, 120, 4, 4));
-//  changes.add(new Change(3, 120, 3, 4));
+  //changes.add(new Change(3, 120, 3, 4));
   totalBars = 30;
   curChange = changes.get(0);
   firstChange = curChange;
-  myFrameCount = -(getCountInFrames()); //<>//
+  myFrameCount = -(getCountInFrames());
 }
 
 void drawBoxes(){
@@ -46,12 +46,12 @@ void drawText(){
   textFont(theFont);
   textSize(height/24);
   textAlign(LEFT);
-  text("Bar:", width*.6+(gutter), gutter, boxWidth, height*.1);  // Text wraps within text box
+  text("Bar:", width*.6+(gutter), gutter*2, boxWidth, height*.1);  // Text wraps within text box
   textSize((height/4));
   //rect(width*.6, height*.1, boxWidth, height/3);
   textAlign(CENTER);
   textFont(theBigFont);
-  text(Integer.toString(getCurBarNumber()), width*.6, height*.1, boxWidth, height/3);  // Text wraps within text box
+  text(Integer.toString(getCurBarNumber()), width*.6, height*.2, boxWidth, height/3);  // Text wraps within text box
   
   textFont(theFont);
   textSize(height/24);
@@ -61,7 +61,7 @@ void drawText(){
   textAlign(CENTER);
   //rect(width*.6, height*.5, boxWidth, height/3 );  // Text wraps within text box
   textFont(theBigFont);
-  text(Integer.toString(getCurBeat()), width*.6, height*.5, boxWidth, height/3 );  // Text wraps within text box
+  text(Integer.toString(getCurBeat()), width*.6, height*.6, boxWidth, height/3 );  // Text wraps within text box
   
   textFont(theFont);
   textSize(height/24);
@@ -77,7 +77,7 @@ int getTotalFramesPerCircle(Change theChange){
 }
 
 int getTotalFramesPerCircle(){
-  return (int)(curChange.getDur()*myFrameRate*curChange.num); //<>//
+  return (int)(curChange.getDur()*myFrameRate*curChange.num);
 }
 
 int getTotalFramesPerSegment(Change theChange){
